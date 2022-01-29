@@ -22,9 +22,6 @@ addons:
       - attr
       - lsof
       - gcc-mingw-w64 # for windows
-before_install:
-  - source ./check-changed.sh
-  - if [ $SKIP_TEST == true ]; then exit 0; fi
 install: true
 before_script:
   - export GO111MODULE=on
