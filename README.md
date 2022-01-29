@@ -1,2 +1,2 @@
 # test-ci
-test some ci problem that not easy to reslove
+test some ci problem that not easy to resolve
