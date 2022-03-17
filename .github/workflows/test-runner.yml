@@ -9,7 +9,31 @@ jobs:
         with:
           fetch-depth: 1
      
-  test-self-hosted-runner:
+  test-self-hosted-runner1:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout 
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+     
+  test-self-hosted-runner2:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout 
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+     
+  test-self-hosted-runner3:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout 
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+     
+  test-self-hosted-runner4:
     runs-on: self-hosted
     steps:
       - name: Checkout 
