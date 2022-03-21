@@ -1,0 +1,30 @@
+name: "test_slack_notify"
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+  
+jobs:
+  test1:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+      - name: Test
+        run: | 
+          exit 0
+      - name: Slack notification1
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          # SLACK_USERNAME: zhoucheng Optional. (defaults to webhook app)
+          SLACK_CHANNEL: qa
+          SLACK_AVATAR: repository 
+        uses: Ilshidur/action-slack@2.0.2
+        with:
+          args: 'A new commit has been pushed.' # Optional
+         
