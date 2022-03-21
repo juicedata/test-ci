@@ -24,7 +24,7 @@ jobs:
         id: slack
         uses: slackapi/slack-github-action@v1.18.0
         with:
-          channel-id: ${{ secrets.SLACK_CHANNEL_ID_FOR_PR_CHECK_NOTIFY }}
+          channel-id: "${{ secrets.SLACK_CHANNEL_ID_FOR_PR_CHECK_NOTIFY }}"
           slack-message: "Your PR Check FAILED! : ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}\nhttps://github.com/${{github.repository}}/actions/runs/${{github.run_id}}"
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}  
