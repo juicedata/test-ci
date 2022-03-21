@@ -25,7 +25,7 @@ jobs:
         uses: slackapi/slack-github-action@v1.18.0
         with:
           channel-id: 'C7JH03S68'
-          slack-message: "Your PR Check FAILED! : ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}\n${{ github.event.check_run.html_url }}"
+          slack-message: "Your PR Check FAILED! : ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}\nhttps://github.com/${{github.repository}}/actions/runs/${{github.run_id}}"
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}  
 
