@@ -18,13 +18,15 @@ jobs:
       - name: Test
         run: | 
           exit 0
-      - name: Slack notification1
-        env:
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-          # SLACK_USERNAME: zhoucheng Optional. (defaults to webhook app)
-          SLACK_CHANNEL: qa
-          SLACK_AVATAR: repository 
-        uses: Ilshidur/action-slack@2.0.2
+      - name: Send Slack Notification
+        id: slack
+        uses: slackapi/slack-github-action@v1.18.0
         with:
-          args: 'A new commit has been pushed.' # Optional
+          # Slack channel id, channel name, or user id to post message.
+          # See also: https://api.slack.com/methods/chat.postMessage#channels
+          channel-id: 'C031VHP348P'
+          # For posting a simple plain text message
+          slack-message: "You have a Failure Test : ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}      
          
