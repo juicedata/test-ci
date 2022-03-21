@@ -18,7 +18,17 @@ jobs:
       - name: Test
         run: | 
           exit 0
-      - name: Slack Notification
+      - name: Slack notification1
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          # SLACK_USERNAME: zhoucheng Optional. (defaults to webhook app)
+          SLACK_CHANNEL: qa
+          SLACK_AVATAR: repository 
+        uses: Ilshidur/action-slack@2.0.2
+        with:
+          args: 'A new commit has been pushed.' # Optional
+          
+      - name: Slack Notification2
         uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_CHANNEL: qa
@@ -28,3 +38,4 @@ jobs:
           SLACK_TITLE: Test Slack Notify
           SLACK_USERNAME: QA Team
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+      
