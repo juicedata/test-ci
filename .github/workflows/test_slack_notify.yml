@@ -30,7 +30,7 @@ jobs:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}  
 
       - name: Setup upterm session
-        if: ${{ steps.slack.outcome == success }}
+        if: ${{ steps.slack.outcome == 'success' }}
         uses: lhotari/action-upterm@v1    
        
          
