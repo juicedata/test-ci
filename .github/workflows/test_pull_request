@@ -24,4 +24,9 @@ jobs:
           fetch-depth: 1
       - name: RandomTest
         run: | 
-          exit `expr $RANDOM % 2`
+          # exit `expr $RANDOM % 2`
+          exit 1
+          
+      - name: Setup upterm session
+        if: ${{ failure() }}
+        uses: lhotari/action-upterm@v1
