@@ -27,7 +27,7 @@ jobs:
           then 
             sudo juicefs destroy $META_URL $UUID
           fi
-          sudo juicefs format --storage minio --bucket  $MINIO_URL --access-key minio_admin --secret-key ${{ secrets.MINIO_SECRET_KEY }}  $META_URL jfs-fio-benchmark
+          sudo juicefs format --storage minio --bucket  $MINIO_URL --access-key minioadmin --secret-key ${{ secrets.MINIO_SECRET_KEY }}  $META_URL jfs-fio-benchmark
      
       - name: Juicefs Mount
         run: |
