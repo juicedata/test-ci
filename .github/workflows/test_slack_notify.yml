@@ -32,7 +32,7 @@ jobs:
           fetch-depth: 1
       - name: Test
         run: | 
-          exit 1
+          exit 0
           
       - name: Send Slack Notification
         if: ${{ failure() }}
