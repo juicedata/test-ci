@@ -11,7 +11,7 @@ env:
   MOUNT_POINT: /tmp/juicefs-fio-benchmark
 
 jobs:
-  mysqltestsmalltable:
+  fio-benchmark:
     runs-on: [self-hosted, daily-build]
     steps:
       - name: Set up Go
