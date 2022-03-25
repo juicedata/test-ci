@@ -24,7 +24,7 @@ jobs:
           UUID=$(juicefs status $META_URL | grep UUID | cut -d '"' -f 4)
           echo UUID is: $UUID
           if [ -n "$UUID" ];then 
-            sudo juicefs destroy $META_URL $UUID
+            sudo juicefs destroy $META_URL $UUID --force
           fi
           sudo juicefs format --storage minio --bucket  $MINIO_URL --access-key minioadmin --secret-key ${{ secrets.MINIO_SECRET_KEY }}  $META_URL jfs-fio-benchmark
      
@@ -39,7 +39,7 @@ jobs:
           UUID=$(juicefs status $META_URL | grep UUID | cut -d '"' -f 4)
           echo UUID is: $UUID
           if [ -n "$UUID" ];then 
-            sudo juicefs destroy $META_URL $UUID
+            sudo juicefs destroy $META_URL $UUID --force
           fi
 
       - name: Setup upterm session
