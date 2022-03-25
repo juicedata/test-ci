@@ -22,7 +22,7 @@ jobs:
       - name: Juicefs Format
         run: |
           UUID=$(juicefs status $META_URL | grep UUID | cut -d '"' -f 4)
-          echo UUID is: $(UUID)
+          echo UUID is: $UUID
           if $UUID
           then 
             sudo juicefs destroy $META_URL $UUID
@@ -38,7 +38,7 @@ jobs:
       - name: Clean  
         run: |
           UUID=$(juicefs status $META_URL | grep UUID | cut -d '"' -f 4)
-          echo UUID is: $(UUID)
+          echo UUID is: $UUID
           if $UUID
           then 
             sudo juicefs destroy $META_URL $UUID
