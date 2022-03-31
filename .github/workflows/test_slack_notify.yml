@@ -43,7 +43,7 @@ jobs:
           payload: | 
             {"attachments": [
                 {
-                "color":"#ff000",
+                "color":"#ff0000",
                 "footer":"<https://juicefs.com/>",
                 "footer_icon":"https://s.juicefs.com/static/jfs/logo.svg",
                 "ts":1502411430,
