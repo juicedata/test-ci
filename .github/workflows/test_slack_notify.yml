@@ -44,34 +44,20 @@ jobs:
           payload: | 
             {"attachments": [
                 {
-                "fields":[
-                    {"title":"Comments","value":3,"short":true},
-                    {"title":"Reviewers","value":"thomasjo, fosslinux","short":true}
-                ],
-                "color":"#6f42c1","footer":"<https://github.com/github/hub|github/hub>",
-                "footer_icon":"https://github.githubassets.com/favicon.ico",
+                "color":"#6f42c1",
+                "footer":"<https://juicefs.com/>",
+                "footer_icon":"https://s.juicefs.com/static/jfs/logo.svg",
                 "ts":1502411430,
                 "mrkdwn_in":["text"],
-                "author_name":"e-beach",
-                "author_link":"https://github.com/e-beach",
-                "author_icon":"https://avatars1.githubusercontent.com/u/13651458?v=4",
-                "title":"#1535 Make fork command idempotent",
-                "title_link":"https://github.com/github/hub/pull/1535",
-                "fallback":"[github/hub] #1535 Make fork command idempotent",
-                "text":"Fixes #1499.rnrnThis PR makes  succeed, with no operation, if a remote pointing to the forked repository already exists.rn ",
-                "pretext":"Pull request merged by e-beach"},
-                {
-                "fallback":"Super CI: Mighty Readme report",
-                "author_name":"Super CI: Mighty Readme report",
-                "author_icon":"https://github.com/images/error/octocat_happy.gif",
-                "author_link":"http://github.com/github/hello-world/runs/4",
-                "color":"#dbab09",
-                "mrkdwn_in":["text"]},
-                {
-                "color":"#dbab09",
-                "fallback":"2 other checks have passed",
-                "text":":white_check_mark: 2 other checks have passed",
-                "footer":"2/3 successful checks"}
+                "author_name":"${{ github.event.pull_request.user.login || github.event.sender.login || github.actor }}",
+                "author_link":"${{ github.event.pull_request.user.html_url || github.event.sender.html_url}}",
+                "author_icon":"${{ github.event.pull_request.user.avatar_url || github.event.sender.avatar_url }}",
+                "title":"${{ github.event.pull_request.title || github.event.head_commit.message }}",
+                "title_link":" ${{ github.event.pull_request.html_url || github.event.head_commit.url }}",
+                "fallback":"${{ github.event.pull_request.title || github.event.head_commit.message }}",
+                "text":"${{ github.event.pull_request.title || github.event.head_commit.message }}",
+                "pretext":"@${{ github.actor}}: CI check ${{ job.status }} on ${{ github.event_name }}"},
+
               ]
             }
         env:
