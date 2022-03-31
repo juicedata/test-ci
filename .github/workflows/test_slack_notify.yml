@@ -40,7 +40,6 @@ jobs:
         uses: slackapi/slack-github-action@v1.18.0
         with:
           channel-id: "C03990BCCES"
-          slack-message: "@${{ github.actor}} CI Check ${{ job.status }} on ${{ github.event_name }}\n${{ github.event.pull_request.title || github.event.head_commit.message }} \nhttps://github.com/${{github.repository}}/actions/runs/${{github.run_id}}"
           payload: | 
             {"attachments": [
                 {
@@ -53,10 +52,9 @@ jobs:
                 "author_link":"${{ github.event.pull_request.user.html_url || github.event.sender.html_url}}",
                 "author_icon":"${{ github.event.pull_request.user.avatar_url || github.event.sender.avatar_url }}",
                 "title":"${{ github.event.pull_request.title || github.event.head_commit.message }}",
-                "title_link":" ${{ github.event.pull_request.html_url || github.event.head_commit.url }}",
                 "fallback":"${{ github.event.pull_request.title || github.event.head_commit.message }}",
-                "text":"${{ github.event.pull_request.title || github.event.head_commit.message }}",
-                "pretext":"@${{ github.actor}}: CI check ${{ job.status }} on ${{ github.event_name }}"
+                "text":"https://github.com/${{github.repository}}/actions/runs/${{github.run_id}}",
+                "pretext":"CI check ${{ job.status }} on ${{ github.event_name }}"
                 }
               ]
             }
