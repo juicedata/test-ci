@@ -38,7 +38,7 @@ jobs:
         run: |
           echo ::set-output name=META_REDIS::redis://127.0.0.1:6379/1
           echo ::set-output name=META_SQLITE::sqlite3://sync-test.db
-          echo ::set-output name=META_MYSQL::"mysql://root:root@\\(127.0.0.1\\)/sync_test"
+          echo ::set-output name=META_MYSQL::"mysql://root:root@\(127.0.0.1\)/sync_test"
           echo ::set-output name=META_POSTGRES::postgres://postgres:postgres@127.0.0.1:5432/sync_test
           echo ::set-output name=MOUNT_POINT::/tmp/juicefs-sync-test
           echo ::set-output name=BUCKET::/var/jfs/
