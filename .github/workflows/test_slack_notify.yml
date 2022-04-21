@@ -35,7 +35,7 @@ jobs:
           exit 1
           
       - name: Send Slack Notification
-        if: ${{job.status == 'failure'}} 
+        if: ${{failure()}} 
         uses: juicedata/slack-notify-action@main
         with:
           channel-id: "${{ secrets.SLACK_CHANNEL_ID_FOR_PR_CHECK_NOTIFY }}"
