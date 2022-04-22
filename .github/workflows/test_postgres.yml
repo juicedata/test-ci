@@ -30,14 +30,11 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v3
 
-      - name: Install dependencies
-        run: npm ci
-
       - name: Connect to PostgreSQL
-        run: node client.js      
-        env:
-          POSTGRES_HOST: localhost
-          POSTGRES_PORT: 5432
+        run: |
+          export PGPASSWORD="postgres"
+          db_name=testdb
+          psql -h localhost -U postgres  -c "drop database if exists $db_name; create database $db_name;" 
       
       - name: Setup upterm session
         if: ${{ failure() }}
