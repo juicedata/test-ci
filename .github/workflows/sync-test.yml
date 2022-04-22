@@ -45,6 +45,7 @@ jobs:
             '--exclude ".accesslog" --exclude ".trash"'
           )
           for option in "${options[@]}"; do
+            echo option is : $option
             ./juicefs format $meta_url sync-test
             ./juicefs mount $meta_url ${{ steps.vars.outputs.MOUNT_POINT }} -d
             mv juicefs-source/* ${{ steps.vars.outputs.MOUNT_POINT }} 
@@ -53,7 +54,7 @@ jobs:
             ./juicefs sync  ${{ steps.vars.outputs.MOUNT_POINT }}/ jfs_sync_dir/ $option
             mkdir rsync_dir
             rsync -azh ${{ steps.vars.outputs.MOUNT_POINT }}/ rsync_dir/ $option
-            diff -u -r jfs_sync_dir rsync_dir
+            diff -ur jfs_sync_dir rsync_dir || true
           done
           ./juicefs umount ${{ steps.vars.outputs.MOUNT_POINT }}
           
