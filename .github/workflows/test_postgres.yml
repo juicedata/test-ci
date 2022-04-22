@@ -25,13 +25,17 @@ jobs:
         ports:
           # Maps tcp port 5432 on service container to the host
           - 5432:5432
-
+      redis:
+        image: redis
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+          
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
-        
-      - name: Set up Docker
-        uses: docker-practice/actions-setup-docker@master
         
       - name: Connect to PostgreSQL
         run: |
@@ -47,6 +51,7 @@ jobs:
           echo "abc" > sync-test/def.txt
           ./juicefs dump $meta_url
           ./juicefs umount sync-test
+          ./juicefs format redis://localhost:6379/1 test2
           
       - name: Setup upterm session
         if: ${{ failure() }}
