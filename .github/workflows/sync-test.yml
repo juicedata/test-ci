@@ -29,7 +29,6 @@ jobs:
         with:
           repository: juicedata/juicefs
           path: juicefs-source
-          ref: 2.x
 
       - name: Test Sync
         run: |
