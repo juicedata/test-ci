@@ -52,7 +52,7 @@ jobs:
             mkdir jfs_sync_dir
             ./juicefs sync  ${{ steps.vars.outputs.MOUNT_POINT }}/ jfs_sync_dir/ $option
             mkdir rsync_dir
-            rsync -avzh ${{ steps.vars.outputs.MOUNT_POINT }}/ rsync_dir/ $option
+            rsync -azh ${{ steps.vars.outputs.MOUNT_POINT }}/ rsync_dir/ $option
             diff -u -r jfs_sync_dir rsync_dir
           done
           ./juicefs umount ${{ steps.vars.outputs.MOUNT_POINT }}
