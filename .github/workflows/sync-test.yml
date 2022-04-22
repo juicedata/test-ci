@@ -1,4 +1,4 @@
-name: "test_postgres"
+name: "sync-test"
 
 on:
   push:
@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
   
 jobs:
-  test_postgres:
+  sync-test:
     runs-on: ubuntu-latest
     steps:
       - name: Set Variable
