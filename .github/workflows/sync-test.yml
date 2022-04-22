@@ -32,10 +32,10 @@ jobs:
 
       - name: Test Sync
         run: |
+          sudo chmod 777 /var/ 
           sudo /etc/init.d/mysql start
           wget -q https://github.com/juicedata/juicefs/releases/download/v1.0.0-beta2/juicefs-1.0.0-beta2-linux-amd64.tar.gz
           tar -xzf juicefs-1.0.0-beta2-linux-amd64.tar.gz
-          sudo chmod 777 /var/ 
           meta_url=${{ steps.vars.outputs.META_MYSQL }}
           ./juicefs format $meta_url sync-test
           ./juicefs mount $meta_url ${{ steps.vars.outputs.MOUNT_POINT }} -d
