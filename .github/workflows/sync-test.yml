@@ -1,0 +1,52 @@
+name: "test_postgres"
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: '*/15 10 * * *'
+  workflow_dispatch:
+  
+jobs:
+  test_postgres:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set Variable
+        id: vars
+        run: |
+          echo ::set-output name=META_MYSQL::"mysql://root:root@\(127.0.0.1\)/sync_test"
+          echo ::set-output name=MOUNT_POINT::/tmp/juicefs-sync-test/
+          echo ::set-output name=BUCKET::/var/jfs/
+          echo ::set-output name=NAME::sync-test
+          echo ::set-output name=DUMP_FILE::meta_with_4M_Empty_files.json
+      - name: Check out repository code
+        uses: actions/checkout@v3
+
+      - name: Checkout source code for test
+        uses: actions/checkout@v2
+        with:
+          repository: juicedata/juicefs
+          path: juicefs-source
+          ref: 2.x
+
+      - name: Test Sync
+        run: |
+          sudo chmod 777 /var/ 
+          meta_url=${{ steps.vars.outputs.META_MYSQL }}
+          ./juicefs format $meta_url sync-test
+          ./juicefs mount $meta_url ${{ steps.vars.outputs.MOUNT_POINT }} -d
+          mv juicefs-souce/* ${{ steps.vars.outputs.MOUNT_POINT }}
+          mv juicefs-souce/.* ${{ steps.vars.outputs.MOUNT_POINT }}
+          mkdir jfs_sync_dir
+          ./juicefs sync  ${{ steps.vars.outputs.MOUNT_POINT }}/ jfs_sync_dir/
+          mkdir rsync_dir
+          rsync  ${{ steps.vars.outputs.MOUNT_POINT }}/ rsync_dir/
+          diff -u -r jfs_sync_dir rsync_dir
+          
+          ./juicefs umount ${{ steps.vars.outputs.MOUNT_POINT }}
+          
+      - name: Setup upterm session
+        if: ${{ failure() }}
+        uses: lhotari/action-upterm@v1
