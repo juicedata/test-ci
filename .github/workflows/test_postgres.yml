@@ -34,8 +34,7 @@ jobs:
         run: |
           export PGPASSWORD="postgres"
           db_name=testdb
-          psql -h localhost -U postgres  -c "\set AUTOCOMMIT on" 
-          psql -h localhost -U postgres  -c "drop database if exists $db_name; create database $db_name;" 
+          psql -h localhost -U postgres  -c "\set AUTOCOMMIT on\ndrop database if exists $db_name; create database $db_name;" 
 
       - name: Setup upterm session
         if: ${{ failure() }}
