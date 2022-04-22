@@ -32,6 +32,7 @@ jobs:
 
       - name: Connect to PostgreSQL
         run: |
+          sudo chmod 777 /var/ 
           meta_url=postgres://postgres:postgres@127.0.0.1:5432/sync_test?sslmode=disable
           export PGPASSWORD="postgres"
           db_name=$(basename $meta_url | awk -F? '{print $1}')
