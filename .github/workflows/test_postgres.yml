@@ -32,10 +32,18 @@ jobs:
 
       - name: Connect to PostgreSQL
         run: |
+          meta_url=postgres://postgres:postgres@127.0.0.1:5432/sync_test?sslmode=disable
           export PGPASSWORD="postgres"
-          db_name=testdb
-          psql -h localhost -U postgres  -c "\set AUTOCOMMIT on\ndrop database if exists $db_name; create database $db_name;" 
-
+          db_name=$(basename $meta_url | awk -F? '{print $1}')
+          printf '\set AUTOCOMMIT on\ndrop database if exists $db_name; create database $db_name; ' |  psql -U postgres -h localhost 
+          wget -q https://github.com/juicedata/juicefs/releases/download/v1.0.0-beta2/juicefs-1.0.0-beta2-linux-amd64.tar.gz
+          tar -xzf juicefs-1.0.0-beta2-linux-amd64.tar.gz
+          ./juicefs format $meta_url
+          ./juicefs mount $meta_url sync-test -d
+          echo "abc" > sync-test/def.txt
+          ./juicefs dump $meta_url
+          ./juicefs umount sync-test
+          
       - name: Setup upterm session
         if: ${{ failure() }}
         uses: lhotari/action-upterm@v1
