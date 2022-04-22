@@ -33,10 +33,12 @@ jobs:
       - name: Test Sync
         run: |
           sudo chmod 777 /var/ 
+          meta_url=${{ steps.vars.outputs.META_MYSQL }}
           sudo /etc/init.d/mysql start
+          db_name=$(basename $meta_url | awk -F? '{print $1}')
+          mysql -uroot -proot -e "drop database if exists $db_name; create database $db_name;" 
           wget -q https://github.com/juicedata/juicefs/releases/download/v1.0.0-beta2/juicefs-1.0.0-beta2-linux-amd64.tar.gz
           tar -xzf juicefs-1.0.0-beta2-linux-amd64.tar.gz
-          meta_url=${{ steps.vars.outputs.META_MYSQL }}
           ./juicefs format $meta_url sync-test
           ./juicefs mount $meta_url ${{ steps.vars.outputs.MOUNT_POINT }} -d
           mv juicefs-souce/* ${{ steps.vars.outputs.MOUNT_POINT }}
