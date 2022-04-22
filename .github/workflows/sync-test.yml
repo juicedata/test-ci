@@ -44,7 +44,7 @@ jobs:
           mv juicefs-source/* ${{ steps.vars.outputs.MOUNT_POINT }} 
           mv juicefs-source/.* ${{ steps.vars.outputs.MOUNT_POINT }} || true
           mkdir jfs_sync_dir
-          ./juicefs sync  ${{ steps.vars.outputs.MOUNT_POINT }}/ jfs_sync_dir/
+          ./juicefs sync  ${{ steps.vars.outputs.MOUNT_POINT }}/ jfs_sync_dir/ --exclude '.accesslog' --exclude '.trash'
           mkdir rsync_dir
           rsync  ${{ steps.vars.outputs.MOUNT_POINT }}/ rsync_dir/
           diff -u -r jfs_sync_dir rsync_dir
