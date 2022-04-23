@@ -55,11 +55,10 @@ jobs:
             ./juicefs sync source_dir/ ${{ steps.vars.outputs.MOUNT_POINT }} 
             test -d jfs_sync_dir && rm jfs_sync_dir/ -rf 
             mkdir jfs_sync_dir
-            extra_option='--exclude ".accesslog" --exclude ".trash"'
-            ./juicefs sync  ${{ steps.vars.outputs.MOUNT_POINT }}/ jfs_sync_dir/ $option $extra_option
+            ./juicefs sync  ${{ steps.vars.outputs.MOUNT_POINT }}/ jfs_sync_dir/ $option --exclude ".accesslog" --exclude ".trash"
             test -d rsync_dir && rm rsync_dir/ -rf 
             mkdir rsync_dir
-            rsync -a ${{ steps.vars.outputs.MOUNT_POINT }}/ rsync_dir/ $option $extra_option
+            rsync -a ${{ steps.vars.outputs.MOUNT_POINT }}/ rsync_dir/ $option --exclude ".accesslog" --exclude ".trash"
             diff -ur jfs_sync_dir rsync_dir 2>&1 | tee -a result.txt || true
           done < .github/workflows/sync-options.txt
       - name: Save test reuslt
