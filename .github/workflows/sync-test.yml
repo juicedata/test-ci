@@ -52,8 +52,7 @@ jobs:
             printf 'option is %s\n' "$option" 
             ./juicefs format $meta_url sync-test
             ./juicefs mount $meta_url ${{ steps.vars.outputs.MOUNT_POINT }} -d
-            mv source_dir/* ${{ steps.vars.outputs.MOUNT_POINT }} 
-            mv source_dir/.* ${{ steps.vars.outputs.MOUNT_POINT }} || true
+            ./juicefs sync source_dir/ ${{ steps.vars.outputs.MOUNT_POINT }} 
             test -d jfs_sync_dir && rm jfs_sync_dir/{*,.*} -rf || true
             extra_option='--exclude ".accesslog" --exclude ".trash"'
             ./juicefs sync  ${{ steps.vars.outputs.MOUNT_POINT }}/ jfs_sync_dir/ $option $extra_option
