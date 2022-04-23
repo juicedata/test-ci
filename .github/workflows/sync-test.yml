@@ -65,7 +65,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with: 
           name: result.txt
-          path: .
+          path: result.txt
       - name: Setup upterm session
         if: ${{ failure() }}
         uses: lhotari/action-upterm@v1
