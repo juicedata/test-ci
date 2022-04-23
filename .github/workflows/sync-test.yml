@@ -66,7 +66,7 @@ jobs:
           else
             printf "Fatal: diff file is not empty, please check result.txt in the artifact"
             exit 1
-  、      fi 
+          fi 
       - name: Save test reuslt
         if: ${{always()}}
         uses: actions/upload-artifact@v2
