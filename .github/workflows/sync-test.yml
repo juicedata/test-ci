@@ -47,7 +47,7 @@ jobs:
             mkdir rsync_dir
             rsync -a source-dir/ rsync_dir/ $option
             diff -ur jfs_sync_dir rsync_dir 2>&1 | tee -a result.txt || true
-          done < sync-options.txt
+          done < .github/workflows/sync-options.txt
           while IFS= read -r option; do
             printf 'option is %s\n' "$option" 
             ./juicefs format $meta_url sync-test
@@ -60,7 +60,7 @@ jobs:
             mkdir rsync_dir
             rsync -a ${{ steps.vars.outputs.MOUNT_POINT }}/ rsync_dir/ $option $extra_option
             diff -ur jfs_sync_dir rsync_dir 2>&1 | tee -a result.txt || true
-          done < sync-options.txt
+          done < .github/workflows/sync-options.txt
       - name: Save test reuslt
         uses: actions/upload-artifact@v2
         with: 
