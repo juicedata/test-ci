@@ -42,9 +42,9 @@ jobs:
 
           while IFS= read -r option; do
             printf 'option is %s\n' "$option" 
-            mkdir jfs_sync_dir
+            test -d jfs_sync_dir && rm jfs_sync_dir/{*,.*} -rf || true
             ./juicefs sync  source-dir/ jfs_sync_dir/ $option
-            mkdir rsync_dir
+            test -d rsync_dir && rm rsync_dir/{*,.*} -rf || true
             rsync -a source-dir/ rsync_dir/ $option
             diff -ur jfs_sync_dir rsync_dir 2>&1 | tee -a result.txt || true
           done < .github/workflows/sync-options.txt
@@ -54,10 +54,10 @@ jobs:
             ./juicefs mount $meta_url ${{ steps.vars.outputs.MOUNT_POINT }} -d
             mv source_dir/* ${{ steps.vars.outputs.MOUNT_POINT }} 
             mv source_dir/.* ${{ steps.vars.outputs.MOUNT_POINT }} || true
-            mkdir jfs_sync_dir
+            test -d jfs_sync_dir && rm jfs_sync_dir/{*,.*} -rf || true
             extra_option='--exclude ".accesslog" --exclude ".trash"'
             ./juicefs sync  ${{ steps.vars.outputs.MOUNT_POINT }}/ jfs_sync_dir/ $option $extra_option
-            mkdir rsync_dir
+            test -d rsync_dir && rm rsync_dir/{*,.*} -rf || true
             rsync -a ${{ steps.vars.outputs.MOUNT_POINT }}/ rsync_dir/ $option $extra_option
             diff -ur jfs_sync_dir rsync_dir 2>&1 | tee -a result.txt || true
           done < .github/workflows/sync-options.txt
