@@ -39,13 +39,9 @@ jobs:
           mysql -uroot -proot -e "drop database if exists $db_name; create database $db_name;" 
           wget -q https://github.com/juicedata/juicefs/releases/download/v1.0.0-beta2/juicefs-1.0.0-beta2-linux-amd64.tar.gz
           tar -xzf juicefs-1.0.0-beta2-linux-amd64.tar.gz
-          options=(
-            '--include "docs/en/security/trash.md" --include "docs/zh_cn/security/trash.md" --include "pkg/vfs/accesslog.go" --include "pkg/vfs/accesslog_test.go" --exclude ".accesslog" --exclude ".trash"'
-            '--exclude ".accesslog" --exclude ".trash"'
-            '--exclude ".accesslog" --exclude ".trash"'
-          )
-          for option in "${options[@]}"; do
-            echo option is : $option
+
+          while IFS= read -r option; do
+            printf 'option is %s\n' "$option" 
             ./juicefs format $meta_url sync-test
             ./juicefs mount $meta_url ${{ steps.vars.outputs.MOUNT_POINT }} -d
             mv juicefs-source/* ${{ steps.vars.outputs.MOUNT_POINT }} 
@@ -55,7 +51,8 @@ jobs:
             mkdir rsync_dir
             rsync -azh ${{ steps.vars.outputs.MOUNT_POINT }}/ rsync_dir/ $option
             diff -ur jfs_sync_dir rsync_dir || true
-          done
+          done < sync_options.txt
+          
           ./juicefs umount ${{ steps.vars.outputs.MOUNT_POINT }}
           
       - name: Setup upterm session
