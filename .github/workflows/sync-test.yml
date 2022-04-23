@@ -53,10 +53,12 @@ jobs:
             ./juicefs format $meta_url sync-test
             ./juicefs mount $meta_url ${{ steps.vars.outputs.MOUNT_POINT }} -d
             ./juicefs sync source_dir/ ${{ steps.vars.outputs.MOUNT_POINT }} 
-            test -d jfs_sync_dir && rm jfs_sync_dir/{*,.*} -rf || true
+            test -d jfs_sync_dir && rm jfs_sync_dir/ -rf 
+            mkdir jfs_sync_dir
             extra_option='--exclude ".accesslog" --exclude ".trash"'
             ./juicefs sync  ${{ steps.vars.outputs.MOUNT_POINT }}/ jfs_sync_dir/ $option $extra_option
-            test -d rsync_dir && rm rsync_dir/{*,.*} -rf || true
+            test -d rsync_dir && rm rsync_dir/ -rf 
+            mkdir rsync_dir
             rsync -a ${{ steps.vars.outputs.MOUNT_POINT }}/ rsync_dir/ $option $extra_option
             diff -ur jfs_sync_dir rsync_dir 2>&1 | tee -a result.txt || true
           done < .github/workflows/sync-options.txt
