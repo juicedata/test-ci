@@ -47,6 +47,7 @@ jobs:
           test_result=true
           while IFS=, read -r jfs_option rsync_option status; do
             echo $jfs_option, $rsync_option, $status
+            status=$(echo $status| xargs)
             if [ "$status" = "disable" ]; then 
               continue
             fi
@@ -61,6 +62,7 @@ jobs:
           done < .github/workflows/resources/sync-options.txt
           while IFS=, read -r jfs_option rsync_option status; do
             echo $jfs_option, $rsync_option, $status
+            status=$(echo $status| xargs)
             if [ "$status" = "disable" ]; then 
               continue
             fi
