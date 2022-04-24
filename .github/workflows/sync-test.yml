@@ -42,7 +42,7 @@ jobs:
           
       - name: Test Sync
         run: |
-          chmod 777 /var
+          sudo chmod 777 /var
           meta_url=redis://127.0.0.1/1
           test_result=true
           while IFS=, read -r jfs_option rsync_option status; do
