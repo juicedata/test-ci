@@ -51,8 +51,8 @@ jobs:
           ./juicefs mount $meta_url $mount_point -d
           ./juicefs sync jfs_source/ $mount_point
           source_dir=$mount_point
-          jfs_option="--dirs --exclude '.*' --exclude 'docs/' --exclude '*.png' --exclude '.accesslog' --exclude '.trash'"
-          rsync_option=" -r --exclude '.*' --exclude 'docs/' --exclude '*.png' --exclude '.accesslog' --exclude '.trash'"
+          jfs_option='--dirs --exclude ".*" --exclude "docs/" --exclude "*.png" --exclude ".accesslog" --exclude ".trash"'
+          rsync_option='-r --exclude ".*" --exclude "docs/" --exclude "*.png" --exclude ".accesslog" --exclude ".trash"'
           echo jfs_option is: $jfs_option
           test -d jfs_sync_dir/ && rm jfs_sync_dir/ -rf 
           mkdir jfs_sync_dir/
