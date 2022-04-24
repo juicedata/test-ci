@@ -60,7 +60,7 @@ jobs:
             printf '\ndiff between juicefs sync and rsync:\n juicefs sync %s\nrsync %s\n' "$jfs_option" "$rsync_option"| tee -a result.txt || true
             diff -ur jfs_sync_dir rsync_dir 2>&1 | tee -a result.txt || if [[ $? == 1 ]]; then  test_result=false; fi
           done < .github/workflows/resources/sync-options.txt
-          while IFS=; read -r jfs_option rsync_option status; do
+          while IFS=, read -r jfs_option rsync_option status; do
             echo $jfs_option, $rsync_option, $status
             status=$(echo $status| xargs)
             if [ "$status" = "disable" ]; then 
