@@ -81,6 +81,7 @@ jobs:
           done < .github/workflows/resources/sync-options.txt
           if [ "$test_result" = true ]; then
             printf "Fatal: sync result is different between juicefs sync and rsync, please check result.txt in the artifact" 
+            exit 1
           fi 
       - name: Save test reuslt
         if: ${{always()}}
