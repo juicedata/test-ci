@@ -50,23 +50,18 @@ jobs:
           ./juicefs mount $meta_url $mount_point -d
           ./juicefs sync jfs_source/ $mount_point
           source_dir=$mount_point
-          while IFS=, read -r jfs_option rsync_option status; do
-            echo $jfs_option, $rsync_option, $status
-            status=$(echo $status| xargs)
-            if [ "$status" = "disable" ]; then 
-              continue
-            fi
-            echo jfs_option is: $jfs_option
-            test -d jfs_sync_dir/ && rm jfs_sync_dir/ -rf 
-            mkdir jfs_sync_dir/
-            ./juicefs sync  $source_dir jfs_sync_dir/ $jfs_option --debug
-            test -d rsync_dir/ && rm rsync_dir/ -rf 
-            mkdir rsync_dir
-            rsync -a $source_dir rsync_dir/ $rsync_option
-            printf '\ndiff between juicefs sync and rsync:\njuicefs sync %s %s %s\nrsync %s %s %s\n' "$source_dir", "jfs_sync_dir/", "$jfs_option" \
-              "$source_dir", "rsync_dir/", "$rsync_option" | tee -a result.txt || true
-            diff -ur jfs_sync_dir rsync_dir 2>&1 | tee -a result.txt || if [[ $? == 1 ]]; then  test_result=false; fi
-          done < .github/workflows/resources/sync-options.txt
+          jfs_option="--dirs --exclude '.*' --exclude 'docs/' --exclude '*.png' --exclude '.accesslog' --exclude '.trash'"
+          rsync_option=" -r --exclude '.*' --exclude 'docs/' --exclude '*.png' --exclude '.accesslog' --exclude '.trash'"
+          echo jfs_option is: $jfs_option
+          test -d jfs_sync_dir/ && rm jfs_sync_dir/ -rf 
+          mkdir jfs_sync_dir/
+          ./juicefs sync  $source_dir jfs_sync_dir/ $jfs_option --debug
+          test -d rsync_dir/ && rm rsync_dir/ -rf 
+          mkdir rsync_dir
+          rsync -a $source_dir rsync_dir/ $rsync_option
+          printf '\ndiff between juicefs sync and rsync:\njuicefs sync %s %s %s\nrsync %s %s %s\n' "$source_dir", "jfs_sync_dir/", "$jfs_option" \
+            "$source_dir", "rsync_dir/", "$rsync_option" | tee -a result.txt || true
+          diff -ur jfs_sync_dir rsync_dir 2>&1 | tee -a result.txt || if [[ $? == 1 ]]; then  test_result=false; fi
           if [ "$test_result" = true ]; then
             printf "Fatal: sync result is different between juicefs sync and rsync, please check result.txt in the artifact" 
             exit 1
