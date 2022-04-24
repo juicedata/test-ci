@@ -42,6 +42,7 @@ jobs:
           
       - name: Test Sync
         run: |
+          sudo chmod 777 /var
           meta_url=redis://127.0.0.1/1
           test_result=true
           mount_point=/tmp/sync-test/
