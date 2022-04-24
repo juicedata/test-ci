@@ -1,7 +1,7 @@
---dirs --include '.*'; -r --include '.*'; disable
---dirs --exclude '.*'; -r --exclude '.*'; disable
---dirs --exclude '.*' --exclude 'docs/' --exclude '*.png'; -r --exclude '.*' --exclude 'docs/' --exclude '*.png'; enable
---dirs --include 'docs/' --include '*.png' --exclude '*'; -r --include 'docs/' --include '*.png' --exclude '*'; enable
---dirs --exclude '*' --include 'docs/' --include '*.png'; -r --exclude '*' --include 'docs/' --include '*.png'; disable
---dirs --include '.github' --include '*.png' --exclude '.*'; -r --include '.github' --include '*.png' --exclude '.*'; disable
---dirs --exclude '.*' --include '.github' --include '*.png'; -r --exclude '.*' --include '.github' --include '*.png'; disable
+--dirs --include '.*', -r --include '.*', disable
+--dirs --exclude '.*', -r --exclude '.*', disable
+--dirs --exclude '.*' --exclude 'docs/' --exclude '*.png', -r --exclude '.*' --exclude 'docs/' --exclude '*.png', enable
+--dirs --include 'docs/' --include '*.png' --exclude '*', -r --include 'docs/' --include '*.png' --exclude '*', enable
+--dirs --exclude '*' --include 'docs/' --include '*.png', -r --exclude '*' --include 'docs/' --include '*.png', disable
+--dirs --include '.github' --include '*.png' --exclude '.*', -r --include '.github' --include '*.png' --exclude '.*', disable
+--dirs --exclude '.*' --include '.github' --include '*.png', -r --exclude '.*' --include '.github' --include '*.png', disable
