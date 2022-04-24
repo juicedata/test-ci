@@ -1,0 +1,77 @@
+name: "test-var-escape"
+
+on:
+  push:
+    branches:
+      - main
+      - 'release-**'
+    paths-ignore:
+      - 'docs/**'
+  pull_request:
+    #The branches below must be a subset of the branches above
+    branches:
+      - main
+      - 'release-**'
+    paths-ignore:
+      - 'docs/**'
+  workflow_dispatch:
+
+jobs:
+  test-var-escape:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set Variable
+        id: vars
+        run: |
+          echo ::set-output name=META_REDIS::redis://127.0.0.1:6379/1
+          echo ::set-output name=META_SQLITE::sqlite3://sync-test.db
+          echo ::set-output name=META_MYSQL::"mysql://root:root@\(127.0.0.1\)/sync_test"
+          echo ::set-output name=META_POSTGRES::postgres://postgres:postgres@127.0.0.1:5432/sync_test
+          echo ::set-output name=MOUNT_POINT::/tmp/juicefs-sync-test
+          echo ::set-output name=BUCKET::/var/jfs/
+          echo ::set-output name=NAME::sync-test
+          echo ::set-output name=DUMP_FILE::meta_with_4M_Empty_files.json
+
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: '1.17.x'
+
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+
+      - name: Build linux target
+        run: |
+          wget https://github.com/juicedata/juicefs/releases/download/v1.0.0-beta2/juicefs-1.0.0-beta2-linux-amd64.tar.gz 
+          tar -zxf juicefs-1.0.0-beta2-linux-amd64.tar.gz 
+
+      - name: Init
+        run: |      
+          sudo chmod 777 /var
+          sudo /etc/init.d/mysql start
+          wget -q https://s.juicefs.com/static/meta_with_4M_Empty_files.json.gz
+          gzip -dk  meta_with_4M_Empty_files.json.gz
+
+      - name: Test
+        run: |
+          metas=(
+            ${{ steps.vars.outputs.META_MYSQL }}
+            ${{ steps.vars.outputs.META_REDIS }}
+            ${{ steps.vars.outputs.META_SQLITE }}
+            ${{ steps.vars.outputs.META_POSTGRES }}
+          )
+          for meta in "${metas[@]}"; do
+            echo meta is : $meta
+            ./juicefs load $meta ${{ steps.vars.outputs.DUMP_FILE }}
+            ./juicefs mount $meta ${{ steps.vars.outputs.MOUNT_POINT }}
+            if [ -d data/ ]; then
+              rm data/.* -rf 
+            else
+              mkdir data
+            fi
+            ./juicefs sync ${{ steps.vars.outputs.MOUNT_POINT }} data/
+            ./juicefs umount $meta
+          done
+          

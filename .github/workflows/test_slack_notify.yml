@@ -34,52 +34,12 @@ jobs:
         run: | 
           exit 1
           
-      - name: Send Slack Notification
-        if: ${{ failure() }}
-        id: slack
-        uses: slackapi/slack-github-action@v1.18.0
-        with:
-          channel-id: "C03990BCCES"
-          slack-message: "@${{ github.actor}} CI Check ${{ job.status }} on ${{ github.event_name }}\n${{ github.event.pull_request.title || github.event.head_commit.message }} \nhttps://github.com/${{github.repository}}/actions/runs/${{github.run_id}}"
-          payload: | 
-            {"attachments": [
-                {
-                "fields":[
-                    {"title":"Comments","value":3,"short":true},
-                    {"title":"Reviewers","value":"thomasjo, fosslinux","short":true}
-                ],
-                "color":"#6f42c1","footer":"<https://github.com/github/hub|github/hub>",
-                "footer_icon":"https://github.githubassets.com/favicon.ico",
-                "ts":1502411430,
-                "mrkdwn_in":["text"],
-                "author_name":"e-beach",
-                "author_link":"https://github.com/e-beach",
-                "author_icon":"https://avatars1.githubusercontent.com/u/13651458?v=4",
-                "title":"#1535 Make fork command idempotent",
-                "title_link":"https://github.com/github/hub/pull/1535",
-                "fallback":"[github/hub] #1535 Make fork command idempotent",
-                "text":"Fixes #1499.rnrnThis PR makes  succeed, with no operation, if a remote pointing to the forked repository already exists.rn ",
-                "pretext":"Pull request merged by e-beach"},
-                {
-                "fallback":"Super CI: Mighty Readme report",
-                "author_name":"Super CI: Mighty Readme report",
-                "author_icon":"https://github.com/images/error/octocat_happy.gif",
-                "author_link":"http://github.com/github/hello-world/runs/4",
-                "color":"#dbab09",
-                "mrkdwn_in":["text"]},
-                {
-                "color":"#dbab09",
-                "fallback":"2 other checks have passed",
-                "text":":white_check_mark: 2 other checks have passed",
-                "footer":"2/3 successful checks"}
-              ]
-            }
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}  
+#      - name: Send Slack Notification
+#        if: ${{failure()}} 
+#        uses: juicedata/slack-notify-action@main
+#        with:
+#          channel-id: "${{ secrets.SLACK_CHANNEL_ID_FOR_PR_CHECK_NOTIFY }}"
+#          slack_bot_token: "${{ secrets.SLACK_BOT_TOKEN }}"  
           
-      - name: Setup upterm session
-        # if: ${{ steps.slack.outcome == 'success' }}
-        if: ${{ failure() }}
-        uses: lhotari/action-upterm@v1    
-       
+
          
