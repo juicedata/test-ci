@@ -1,6 +1,6 @@
 --dirs --include '.*', -r --include '.*', disable
 --dirs --exclude '.*', -r --exclude '.*', disable
---dirs --exclude '.*' --exclude 'docs/' --exclude '*.png', -r --exclude '.*' --exclude 'docs/' --exclude '*.png', enable
+--dirs --exclude '.*' --exclude 'docs/' --exclude '*.png' --exclude '.accesslog' --exclude '.trash', -r --exclude '.*' --exclude 'docs/' --exclude '*.png', enable
 --dirs --include 'docs/' --include '*.png' --exclude '*', -r --include 'docs/' --include '*.png' --exclude '*', disbale
 --dirs --exclude '*' --include 'docs/' --include '*.png', -r --exclude '*' --include 'docs/' --include '*.png', disable
 --dirs --include '.github' --include '*.png' --exclude '.*', -r --include '.github' --include '*.png' --exclude '.*', disable
