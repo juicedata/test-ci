@@ -42,24 +42,21 @@ jobs:
           
       - name: Test Sync
         run: |
-          sudo chmod 777 /var
           meta_url=redis://127.0.0.1/1
           test_result=true
           mount_point=/tmp/sync-test/
           ./juicefs format $meta_url sync-test
           ./juicefs mount $meta_url $mount_point -d
           ./juicefs sync jfs_source/ $mount_point
-          for source_dir in "$mount_point" "jfs_source/"; do 
+          for source_dir in "$mount_point"; do 
             while IFS=, read -r jfs_option rsync_option status; do
               echo $jfs_option, $rsync_option, $status
               status=$(echo $status| xargs)
               if [ "$status" = "disable" ]; then 
                 continue
               fi
-              if [ "$source_dir" = "$mount_point" ]; then 
-                jfs_option="$jfs_option --exclude '.accesslog' --exclude '.trash'"
-                echo jfs_option is: $jfs_option
-              fi
+              jfs_option="$jfs_option --exclude '.accesslog' --exclude '.trash'"
+              echo jfs_option is: $jfs_option
               test -d jfs_sync_dir/ && rm jfs_sync_dir/ -rf 
               mkdir jfs_sync_dir/
               ./juicefs sync  $source_dir jfs_sync_dir/ $jfs_option --debug
