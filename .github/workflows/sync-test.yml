@@ -45,7 +45,7 @@ jobs:
           meta_url=redis://127.0.0.1/1
           test_result=true
           while IFS=; read -r jfs_option rsync_option status; do
-            echo 
+            echo $jfs_option, $rsync_option, $status
             if [ "$status" = "disable" ]; then 
               continue
             fi
@@ -59,6 +59,7 @@ jobs:
             diff -ur jfs_sync_dir rsync_dir 2>&1 | tee -a result.txt || if [[ $? == 1 ]]; then  test_result=false; fi
           done < .github/workflows/resources/sync-options.txt
           while IFS=; read -r jfs_option rsync_option status; do
+            echo $jfs_option, $rsync_option, $status
             if [ "$status" = "disable" ]; then 
               continue
             fi
