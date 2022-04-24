@@ -62,7 +62,7 @@ jobs:
               fi
               test -d jfs_sync_dir/ && rm jfs_sync_dir/ -rf 
               mkdir jfs_sync_dir/
-              ./juicefs sync  $source_dir jfs_sync_dir/ $jfs_option
+              ./juicefs sync  $source_dir jfs_sync_dir/ $jfs_option --debug
               test -d rsync_dir/ && rm rsync_dir/ -rf 
               mkdir rsync_dir
               rsync -a $source_dir rsync_dir/ $rsync_option
