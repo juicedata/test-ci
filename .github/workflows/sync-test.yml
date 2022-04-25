@@ -26,18 +26,19 @@ jobs:
           # Maps port 6379 on service container to the host
           - 6379:6379
     steps:
-      - name: Check out repository code
-        uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+
+      - name: Build linux target
+        run: make juicefs
 
       - name: Checkout source code for test
         uses: actions/checkout@v2
         with:
           repository: juicedata/juicefs
           path: jfs_source
-          
-      - name: make juicefs 
-        run: | 
-          make juicefs
           
       - name: Test Sync1
         run: |
