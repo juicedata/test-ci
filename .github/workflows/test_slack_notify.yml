@@ -37,7 +37,7 @@ jobs:
       - name: Send Notification To Slack
         id: send_notification_to_slack
         uses: slackapi/slack-github-action@v1.18.0
-        if: github.event_name == "schedule" and steps.test.conclusion == "failure"
+        if: github.event_name == "schedule" && steps.test.conclusion == "failure"
         with:
           channel-id: C7JH03S68
           slack-message: "Ignore me, just a test msg, See: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id}}"
