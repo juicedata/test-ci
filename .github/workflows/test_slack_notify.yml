@@ -6,7 +6,7 @@ on:
   pull_request:
     branches: [ main ]
   schedule:
-    - cron: '*/15 10 * * *'
+    - cron: '*/6 6,7 * * *'
   workflow_dispatch:
   
 jobs:
@@ -31,15 +31,18 @@ jobs:
         with:
           fetch-depth: 1
       - name: Test
+        id: test
         run: | 
           exit 1
-          
-#      - name: Send Slack Notification
-#        if: ${{failure()}} 
-#        uses: juicedata/slack-notify-action@main
-#        with:
-#          channel-id: "${{ secrets.SLACK_CHANNEL_ID_FOR_PR_CHECK_NOTIFY }}"
-#          slack_bot_token: "${{ secrets.SLACK_BOT_TOKEN }}"  
+      - name: Send Notification To Slack
+        id: send_notification_to_slack
+        uses: slackapi/slack-github-action@v1.18.0
+        if: github.event_name == "schedule" and steps.test.conclusion == "failure"
+        with:
+          channel-id: C7JH03S68
+          slack-message: "Ignore me, just a test msg, See: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id}}"
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
           
 
          
