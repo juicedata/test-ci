@@ -1,0 +1,40 @@
+name: 'Slack Notify'
+description: 'slack notify'
+inputs:
+  channel-id:  
+    description: 'slack channel id'
+    required: true
+    default: ''
+  color:
+    description: 'color'
+    required: true
+    default: '#CB2431'
+  slack_bot_token:
+    description: 'slack bot secret'
+    required: true
+    default: ''
+
+runs:
+  using: "composite"
+  steps:
+    - name: send slack notification
+      if: ${{github.event_name != 'workflow_dispatch'}} 
+      uses: slackapi/slack-github-action@v1.18.0
+      with:
+        channel-id: "${{inputs.channel-id}}"
+        payload: |
+          {"attachments": [
+            {
+              "pretext":"CI check ${{ job.status }} on ${{ github.event_name }}",
+              "mrkdwn_in":["text"],
+              "author_name":"${{ github.event.pull_request.user.login || github.event.sender.login || github.actor }}",
+              "author_link":"${{ github.event.pull_request.user.html_url || github.event.sender.html_url}}",
+              "author_icon":"${{ github.event.pull_request.user.avatar_url || github.event.sender.avatar_url }}",
+              "title":"${{ github.event.pull_request.title || github.event.head_commit.message }}",
+              "text":"https://github.com/${{github.repository}}/actions/runs/${{github.run_id}}",
+              "color":"${{inputs.color}}"
+            }
+            ]
+          }
+      env:
+        SLACK_BOT_TOKEN: ${{inputs.slack_bot_token}}
