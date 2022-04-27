@@ -30,11 +30,10 @@ jobs:
         with:
           fetch-depth: 1
           
-      - name: Checkout actions
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
       
       - name: Send slack notify 
-        uses: .github/actions/slack@main
+        uses: ./.github/actions/slack
         with:
           channel-id: "${{ secrets.SLACK_CHANNEL_ID_FOR_PR_CHECK_NOTIFY }}"
           slack_bot_token: "${{ secrets.SLACK_BOT_TOKEN }}"  
