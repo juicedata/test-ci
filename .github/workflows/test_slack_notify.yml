@@ -24,14 +24,18 @@ jobs:
         run: echo '${{ toJSON(strategy) }}'
       - name: Dump matrix context
         run: echo '${{ toJSON(matrix) }}'
+        
       - name: Checkout
         uses: actions/checkout@v2
         with:
           fetch-depth: 1
-      - name: Test
-        id: test
-        run: | 
-          exit 1
-
+          
+      - uses: actions/checkout@v3
+      
+      - name: Send slack notify 
+        uses: ./.github/actions/slack
+        with:
+          channel-id: "${{ secrets.SLACK_CHANNEL_ID_FOR_PR_CHECK_NOTIFY }}"
+          slack_bot_token: "${{ secrets.SLACK_BOT_TOKEN }}"  
 
          
