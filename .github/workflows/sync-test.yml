@@ -26,8 +26,13 @@ jobs:
           # Maps port 6379 on service container to the host
           - 6379:6379
     steps:
-      - name: Check out repository code
-        uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+
+      - name: Build linux target
+        run: make juicefs
 
       - name: Checkout source code for test
         uses: actions/checkout@v2
@@ -35,13 +40,48 @@ jobs:
           repository: juicedata/juicefs
           path: jfs_source
           
-      - name: download juicefs
-        run: |      
-          wget -q https://github.com/juicedata/juicefs/releases/download/v1.0.0-beta2/juicefs-1.0.0-beta2-linux-amd64.tar.gz
-          tar -xzf juicefs-1.0.0-beta2-linux-amd64.tar.gz
-          
-      - name: Test Sync
+      - name: Test Sync1
         run: |
+          meta_url=redis://127.0.0.1/1
+          test_result=true
+          mount_point=/tmp/sync-test/
+          ./juicefs format $meta_url sync-test
+          ./juicefs mount $meta_url $mount_point -d
+          ./juicefs sync jfs_source/ $mount_point
+          for source_dir in "$mount_point" "jfs_source/" ; do 
+            while IFS=, read -r jfs_option rsync_option status; do
+              printf '\n%s, %s, %s\n' "$jfs_option" "$rsync_option" "$status"
+              status=$(echo $status| xargs)
+              if [ "$status" = "disable" ]; then 
+                continue
+              fi
+              if [ "$source_dir" = "$mount_point" ]; then 
+                jfs_option="$jfs_option --exclude '.accesslog'" 
+                echo jfs_option is: $jfs_option
+              fi
+              test -d rsync_dir/ && rm rsync_dir/ -rf 
+              mkdir rsync_dir
+              set -x
+              set -o noglob
+              rsync -a $source_dir rsync_dir/ $rsync_option
+              test -d jfs_sync_dir/ && rm jfs_sync_dir/ -rf 
+              mkdir jfs_sync_dir/
+              ./juicefs sync  $source_dir jfs_sync_dir/ $jfs_option
+              printf 'diff between juicefs sync and rsync:\njuicefs sync %s %s %s\nrsync %s %s %s\n' "$source_dir"  "jfs_sync_dir/" "$jfs_option" \
+                "$source_dir" "rsync_dir/"  "$rsync_option" | tee -a result.txt || true
+              set -u noglob
+              set +x
+              diff -ur jfs_sync_dir rsync_dir 2>&1 | tee -a result.txt || if [[ $? == 1 ]]; then  test_result=false; fi
+            done < .github/workflows/resources/sync-options.txt
+          done
+          if [ "$test_result" = true ]; then
+            printf "Fatal: sync result is different between juicefs sync and rsync, please check result.txt in the artifact" 
+            exit 1
+          fi 
+      
+      - name: Test Sync2
+        run: |
+          set -x
           sudo chmod 777 /var
           meta_url=redis://127.0.0.1/1
           test_result=true
@@ -50,15 +90,17 @@ jobs:
           ./juicefs mount $meta_url $mount_point -d
           ./juicefs sync jfs_source/ $mount_point
           source_dir=$mount_point
-          jfs_option="--dirs --exclude '.*' --exclude 'docs/' --exclude '*.png' --exclude '.accesslog' --exclude '.trash'"
-          rsync_option=" -r --exclude '.*' --exclude 'docs/' --exclude '*.png' --exclude '.accesslog' --exclude '.trash'"
+          jfs_option='--dirs --exclude ".*" --exclude "docs/" --exclude "*.png" --exclude ".accesslog" --exclude ".trash"'
+          rsync_option='-r --exclude ".*" --exclude "docs/" --exclude "*.png" --exclude ".accesslog" --exclude ".trash"'
           echo jfs_option is: $jfs_option
+          set -o noglob
           test -d jfs_sync_dir/ && rm jfs_sync_dir/ -rf 
           mkdir jfs_sync_dir/
           ./juicefs sync  $source_dir jfs_sync_dir/ $jfs_option --debug
           test -d rsync_dir/ && rm rsync_dir/ -rf 
           mkdir rsync_dir
           rsync -a $source_dir rsync_dir/ $rsync_option
+          set -u noglob
           printf '\ndiff between juicefs sync and rsync:\njuicefs sync %s %s %s\nrsync %s %s %s\n' "$source_dir", "jfs_sync_dir/", "$jfs_option" \
             "$source_dir", "rsync_dir/", "$rsync_option" | tee -a result.txt || true
           diff -ur jfs_sync_dir rsync_dir 2>&1 | tee -a result.txt || if [[ $? == 1 ]]; then  test_result=false; fi
@@ -66,6 +108,7 @@ jobs:
             printf "Fatal: sync result is different between juicefs sync and rsync, please check result.txt in the artifact" 
             exit 1
           fi 
+          
       - name: Save test reuslt
         if: ${{always()}}
         uses: actions/upload-artifact@v2
