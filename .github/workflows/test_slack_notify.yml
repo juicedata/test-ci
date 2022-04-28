@@ -6,13 +6,11 @@ on:
       - main
     paths-ignore:
       - '.github/*.yml'
-      - '!.github/test_slack_notify.yml'
   pull_request:
     branches: 
       - main
     paths-ignore:
       - '.github/*.yml'
-      - '!.github/test_slack_notify.yml'
   workflow_dispatch:
   
 jobs:
