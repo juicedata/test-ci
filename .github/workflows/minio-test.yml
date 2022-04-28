@@ -5,14 +5,14 @@ on:
     branches: 
       - main
     paths:
-      - '.github/minio-test.yml'
       - '!.github/**'
+      - '.github/minio-test.yml'
   pull_request:
     branches: 
       - main
     paths:
-      - '.github/minio-test.yml'
       - '!.github/**'
+      - '.github/minio-test.yml'
   schedule:
     - cron: '*/15 10 * * *'
   workflow_dispatch:
