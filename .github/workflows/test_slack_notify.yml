@@ -2,9 +2,17 @@ name: "test_slack_notify"
 
 on:
   push:
-    branches: [ main ]
+    branches: 
+      - main
+    paths-ignore:
+      - '.github/*.yml'
+      - '!.github/test_slack_notify.yml'
   pull_request:
-    branches: [ main ]
+    branches: 
+      - main
+    paths-ignore:
+      - '.github/*.yml'
+      - '!.github/test_slack_notify.yml'
   workflow_dispatch:
   
 jobs:
