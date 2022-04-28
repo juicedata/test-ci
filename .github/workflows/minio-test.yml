@@ -5,16 +5,12 @@ on:
     branches: 
       - main
     paths:
-      - './**'
-      - '!docs/**'
       - '.github/minio-test.yml'
       - '!.github/**'
   pull_request:
     branches: 
       - main
     paths:
-      - './**'
-      - '!docs/**'
       - '.github/minio-test.yml'
       - '!.github/**'
   schedule:
