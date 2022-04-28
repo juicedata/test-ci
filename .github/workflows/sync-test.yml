@@ -2,9 +2,21 @@ name: "sync-test"
 
 on:
   push:
-    branches: [ main ]
+    branches: 
+      - main
+    paths:
+      - '**'
+      - '!docs/**'
+      - '!.github/**'
+      - '.github/sync-test.yml'
   pull_request:
-    branches: [ main ]
+    branches: 
+      - main
+    paths:
+      - '**'
+      - '!docs/**'
+      - '!.github/**'
+      - '.github/sync-test.yml'
   schedule:
     - cron: '*/15 10 * * *'
   workflow_dispatch:
