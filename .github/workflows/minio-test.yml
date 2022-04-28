@@ -7,16 +7,16 @@ on:
     paths:
       - '**'
       - '!docs/**'
-      - '!.github/**'
       - '.github/minio-test.yml'
+      - '!.github/**'
   pull_request:
     branches: 
       - main
     paths:
       - '**'
       - '!docs/**'
-      - '!.github/**'
       - '.github/minio-test.yml'
+      - '!.github/**'
   schedule:
     - cron: '*/15 10 * * *'
   workflow_dispatch:
