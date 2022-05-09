@@ -60,7 +60,7 @@ jobs:
           mount_point=/tmp/sync-test/
           ./juicefs format --storage minio --bucket http://localhost:9000/jfs-test --access-key minioadmin --secret-key minioadmin $meta_url myjfs
           ./juicefs mount $meta_url $mount_point -d
-          stop_and_restart_redis
+          stop_and_restart_redis &
           for i in {1..500}; do
             last_index=$i
             echo write content, index is $i
