@@ -47,7 +47,7 @@ jobs:
           function stop_and_restart_redis(){
             sleep 3
             redis-cli shutdown
-            sleep 30
+            sleep 60
             container_id=$(docker ps -a | grep redis | awk '{print $1}')
             docker restart $container_id
             sleep 3
@@ -58,13 +58,14 @@ jobs:
           ./juicefs format --storage minio --bucket http://localhost:9000/jfs-test --access-key minioadmin --secret-key minioadmin $meta_url myjfs
           ./juicefs mount $meta_url $mount_point -d
           stop_and_restart_redis
-          for i in {1..10000}; do
+          for i in {1..500}; do
             last_index=$i
+            echo write content, index is $i
             echo "content_$i">$mount_point/file_$i.txt || break
-            echo write succeed, index is $i
+            echo succeed
           done
           wait
-          echo 'done'
+          echo 'wait all done'
           last_index=$(expr $last_index-1 | bc)
           cat $mount_point/file_$last_index.txt | grep "content_$last_index"
           
