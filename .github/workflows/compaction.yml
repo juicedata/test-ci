@@ -59,15 +59,15 @@ jobs:
           ./juicefs mount $meta_url $mount_point -d
           stop_and_restart_redis
           for i in {1..10000}; do
-            echo $i>$mount_point/file_$i.txt
-            sync
-            echo sync succeed, index is $i
+            last_index=$i
+            echo "content_$i">$mount_point/file_$i.txt || break
+            echo write succeed, index is $i
           done
           wait
           echo 'done'
-          cat $mount_point/file_$last_index.txt
-          exit 1
+          last_index=$(expr $last_index-1 | bc)
+          cat $mount_point/file_$last_index.txt | grep "content_$last_index"
           
       - name: Setup upterm session
-        if: ${{ failure() }}
+        if: ${{ always() }}
         uses: lhotari/action-upterm@v1
