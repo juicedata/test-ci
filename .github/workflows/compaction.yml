@@ -47,7 +47,7 @@ jobs:
           function stop_and_restart_redis(){
             sleep 3
             redis-cli shutdown
-            sleep 3
+            sleep 30
             container_id=$(docker ps -a | grep redis | awk '{print $1}')
             docker restart $container_id
             sleep 3
