@@ -46,10 +46,13 @@ jobs:
           declare -a last_index=1
           function stop_and_restart_redis(){
             sleep 3
-            redis-cli shutdown
+            echo shutdown
+            sudo redis-cli shutdown
             sleep 60
             container_id=$(docker ps -a | grep redis | awk '{print $1}')
-            docker restart $container_id
+            echo restart
+            sudo docker restart $container_id
+            echo restart succeed
             sleep 3
           }
           
