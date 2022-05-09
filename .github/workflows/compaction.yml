@@ -48,7 +48,7 @@ jobs:
             sleep 1
             echo shutdown
             sudo redis-cli shutdown
-            sleep 30
+            sleep 60
             container_id=$(docker ps -a | grep redis | awk '{print $1}')
             echo restart
             sudo docker restart $container_id
@@ -66,6 +66,7 @@ jobs:
             echo write content, index is $i
             echo "content_$i">$mount_point/file_$i.txt || break
             echo succeed
+            sleep 0.1
           done
           wait
           echo 'wait all done'
