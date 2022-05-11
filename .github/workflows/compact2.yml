@@ -39,7 +39,7 @@ jobs:
           meta=redis://localhost/1
           mp=myjfs/
           name=myjfs
-          juicefs=juicefs
+          juicefs=./juicefs
      
           $juicefs format $meta $name --trash-days 0
           $juicefs mount -d $meta $mp
