@@ -46,15 +46,16 @@ jobs:
           sudo chmod 777 /var/jfs/
           $juicefs format $meta $name --trash-days 1
           $juicefs mount -d $meta $mp
-          fio --name=abc --rw=randwrite --refill_buffers --size=4G --bs=256k --directory=$mp
+          fio --name=abc --rw=randwrite --refill_buffers --size=100M --bs=256k --directory=$mp
           redis-cli save
           $juicefs gc --compact --delete $meta
           container_id=$(docker ps -a | grep redis | awk '{print $1}')
           sudo killall -9 redis-server
           sudo docker restart $container_id
           sleep 3
+          #test comment
           $juicefs fsck $meta
           
       - name: Setup upterm session
-        if: ${{ always() }}
+        if: ${{ failure() }}
         uses: lhotari/action-upterm@v1
