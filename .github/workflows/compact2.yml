@@ -50,7 +50,7 @@ jobs:
           redis-cli save
           $juicefs gc --compact --delete $meta
           container_id=$(docker ps -a | grep redis | awk '{print $1}')
-          sudo docker kill -s KILL $container_id
+          sudo killall -9 redis-server
           sudo docker restart $container_id
           sleep 3
           $juicefs fsck $meta
