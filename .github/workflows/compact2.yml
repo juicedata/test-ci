@@ -1,16 +1,23 @@
-name: "compaction-test-2"
+name: "gc"
 
 on:
   push:
-    branches: 
-      - main
+    branches:
+      - 'main'
+      - 'release-**'
+    paths-ignore:
+      - 'docs/**'
   pull_request:
-    branches: 
-      - main
+    #The branches below must be a subset of the branches above
+    branches:
+      - 'main'
+      - 'release-**'
+    paths-ignore:
+      - 'docs/**'
   workflow_dispatch:
   
 jobs:
-  compaction-test-2:
+  gc:
     runs-on: ubuntu-latest
     services:
       redis:
@@ -25,19 +32,27 @@ jobs:
         ports:
           # Maps port 6379 on service container to the host
           - 6379:6379
-    steps:                     
+    steps:        
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: '1.17.x'
+
+      - name: Build linux target
+        run: make juicefs
+
       - name: Install Tools
         run: | 
-          #wget -q https://github.com/juicedata/juicefs/releases/download/v1.0.0-beta3/juicefs-1.0.0-beta3-linux-amd64.tar.gz
-          #tar -zxf juicefs-1.0.0-beta3-linux-amd64.tar.gz
-          wget -q https://github.com/juicedata/juicefs/releases/download/v1.0.0-beta1/juicefs-1.0.0-beta1-linux-amd64.tar.gz
-          tar -zxf juicefs-1.0.0-beta1-linux-amd64.tar.gz
           sudo apt install redis-tools
           sudo apt install fio
           
-      - name: Test Format
+      - name: Test delay delete slice after compaction
         run: |
-          export JFS_SKIPPED_TIME=1
           meta=redis://localhost/1
           mp=myjfs/
           name=myjfs
@@ -46,16 +61,24 @@ jobs:
           sudo chmod 777 /var/jfs/
           $juicefs format $meta $name --trash-days 1
           $juicefs mount -d $meta $mp
-          fio --name=abc --rw=randwrite --refill_buffers --size=100M --bs=256k --directory=$mp
+          fio --name=abc --rw=randwrite --refill_buffers --size=4G --bs=256k --directory=$mp
           redis-cli save
+          # don't skip files when gc compact
+          export JFS_SKIPPED_TIME=1
           $juicefs gc --compact --delete $meta
           container_id=$(docker ps -a | grep redis | awk '{print $1}')
           sudo killall -9 redis-server
           sudo docker restart $container_id
           sleep 3
-          #test comment
           $juicefs fsck $meta
-          
+
+      - name: Send Slack Notification
+        if: ${{ failure() }}
+        uses: juicedata/slack-notify-action@main
+        with:
+          channel-id: "${{ secrets.SLACK_CHANNEL_ID_FOR_PR_CHECK_NOTIFY }}"
+          slack_bot_token: "${{ secrets.SLACK_BOT_TOKEN }}"          
+
       - name: Setup upterm session
         if: ${{ failure() }}
         uses: lhotari/action-upterm@v1
