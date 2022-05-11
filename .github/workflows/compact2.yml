@@ -41,13 +41,14 @@ jobs:
           name=myjfs
           juicefs=./juicefs
      
-          $juicefs format $meta $name --trash-days 0
+          $juicefs format $meta $name --trash-days 1
           $juicefs mount -d $meta $mp
           fio --name=abc --rw=randwrite --refill_buffers --size=4G --bs=256k --directory=$mp
           redis-cli save
           $juicefs gc --compact --delete $meta
-          killall -9 redis-server
-          redis-server &
+          container_id=$(docker ps -a | grep redis | awk '{print $1}')
+          sudo docker kill -s KILL $container_id
+          sudo docker restart $container_id
           sleep 3
           $juicefs fsck $meta
           
