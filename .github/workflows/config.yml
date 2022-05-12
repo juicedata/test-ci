@@ -56,7 +56,7 @@ jobs:
           ./mc admin user remove minio juicedata
           ./mc admin user add minio juicedata juicedata1
           ./mc admin policy set minio consoleAdmin user=juicedata
-          ./juicefs config $meta --access-key juicedata --secret-key juicedata1
+          ./juicefs config $meta_url --access-key juicedata --secret-key juicedata1
           echo abc > $mount_point/def.txt && echo "write success"
           cat $mount_point/abc.txt | grep abc && echo "read success"
           exit 1
