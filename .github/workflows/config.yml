@@ -29,11 +29,11 @@ jobs:
           
       - name: Setup minio
         run: |
-          export MINIO_ACCESS_KEY=minioadmin
-          export MINIO_SECRET_KEY=miniopass
-          docker run -d -p 9000:9000 --name minio \
+            docker run -d -p 9000:9000 --name minio \
+                     -e "MINIO_ACCESS_KEY=minioadmin" \
+                     -e "MINIO_SECRET_KEY=minioadmin" \
                      -v /tmp/data:/data \
-                     -v ~/.mc/:/root/.minio/ \
+                     -v ~/.mc/:/root/.minio \
                      minio/minio server /data     
                      
       - name: Download juicefs 
@@ -45,8 +45,18 @@ jobs:
         run: |
           meta_url=redis://127.0.0.1/1
           mount_point=/tmp/sync-test/
-          ./juicefs format --storage minio --bucket http://localhost:9000/jfs-test --access-key minioadmin --secret-key minioadmin $meta_url myjfs
+          mc config host add minio http://127.0.0.1:9000 minioadmin minioadmin
+          mc admin user add minio juicedata juicedata
+          mc admin policy set minio consoleAdmin user=juicedata
+          ./juicefs format --storage minio --bucket http://localhost:9000/jfs-test --access-key juicedata --secret-key juicedata $meta_url myjfs
           ./juicefs mount $meta_url $mount_point -d
+          echo abc > $mount_point/abc.txt && echo "write success"
+          mc admin user remove minio juicedata
+          mc admin user add minio juicedata juicedata1
+          mc admin policy set minio consoleAdmin user=juicedata
+          ./juicefs config $meta --access-key juicedata --secret-key juicedata1
+          echo abc > $mount_point/def.txt && echo "write success"
+          cat $mount_point/abc.txt | grep abc && echo "read success"
           exit 1
           
       - name: Setup upterm session
