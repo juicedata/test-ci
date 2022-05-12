@@ -33,7 +33,7 @@ jobs:
           export MINIO_SECRET_KEY=miniopass
           docker run -d -p 9000:9000 --name minio \
                      -v /tmp/data:/data \
-                     -v /tmp/config:/root/.minio \
+                     -v ~/.mc/:/root/.minio \
                      minio/minio server /data     
                      
       - name: Download juicefs 
