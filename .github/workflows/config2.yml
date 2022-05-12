@@ -1,0 +1,78 @@
+name: "config-test-2"
+
+on:
+  push:
+    branches:
+      - 'main'
+      - 'release-**'
+    paths-ignore:
+      - 'docs/**'
+  pull_request:
+    #The branches below must be a subset of the branches above
+    branches:
+      - 'main'
+      - 'release-**'
+    paths-ignore:
+      - 'docs/**'
+  workflow_dispatch:
+  
+jobs:
+  config-test-2:
+    runs-on: ubuntu-latest
+    services:
+      redis:
+        # Docker Hub image
+        image: redis
+        # Set health checks to wait until redis has started
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          # Maps port 6379 on service container to the host
+          - 6379:6379
+    steps:
+      - name: Setup minio
+        run: |
+          wget https://dl.minio.io/server/minio/release/linux-amd64/minio
+          sudo chmod +x minio
+          wget https://dl.minio.io/client/mc/release/linux-amd64/mc
+          sudo chmod +x mc
+       
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+      
+      - name: Download juicefs 
+        run: | 
+          wget -q https://github.com/juicedata/juicefs/releases/download/v1.0.0-beta2/juicefs-1.0.0-beta2-linux-amd64.tar.gz
+          tar -zxf juicefs-1.0.0-beta2-linux-amd64.tar.gz
+          
+
+      - name: Test 
+        run: |
+          meta=redis://localhost/1
+          mp=myjfs/
+          name=myjfs
+          juicefs=./juicefs
+          ak=juicedata
+          sk=juicedata
+          export MINIO_ROOT_USER=$ak
+          export MINIO_ROOT_PASSWORD=$sk
+          sudo ./minio server /minio &
+          sleep 5
+          $juicefs format --storage minio --bucket http://localhost:9000/jfs --access-key=$ak --secret-key=$sk $meta $name 
+          $juicefs mount -d $meta $mp
+
+      - name: Send Slack Notification
+        if: ${{ failure() }}
+        uses: juicedata/slack-notify-action@main
+        with:
+          channel-id: "${{ secrets.SLACK_CHANNEL_ID_FOR_PR_CHECK_NOTIFY }}"
+          slack_bot_token: "${{ secrets.SLACK_BOT_TOKEN }}"          
+
+      - name: Setup upterm session
+        if: ${{ failure() }}
+        uses: lhotari/action-upterm@v1
