@@ -57,14 +57,21 @@ jobs:
           mp=myjfs/
           name=myjfs
           juicefs=./juicefs
-          ak=juicedata
-          sk=juicedata
-          export MINIO_ROOT_USER=$ak
-          export MINIO_ROOT_PASSWORD=$sk
+          ak=juicedata && export MINIO_ROOT_USER=$ak
+          sk=juicedata && export MINIO_ROOT_PASSWORD=$sk
           sudo ./minio server /minio &
           sleep 5
           $juicefs format --storage minio --bucket http://localhost:9000/jfs --access-key=$ak --secret-key=$sk $meta $name 
           $juicefs mount -d $meta $mp
+          echo "abc">$mp/abc.txt
+          sudo killall minio
+          ak=juicedata && export MINIO_ROOT_USER=$ak
+          sk=juicedata2 && export MINIO_ROOT_PASSWORD=$sk
+          sudo ./minio server /minio &
+          $juicefs config --access-key $ak --secret-key $sk
+          sleep 5
+          echo "def">>$mp/abc.txt
+          cat $mp/abc.txt
 
       - name: Send Slack Notification
         if: ${{ failure() }}
