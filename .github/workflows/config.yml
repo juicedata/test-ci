@@ -33,7 +33,7 @@ jobs:
                      -e "MINIO_ACCESS_KEY=minioadmin" \
                      -e "MINIO_SECRET_KEY=minioadmin" \
                      -v /tmp/data:/data \
-                     -v ~/.mc/:/root/.minio \
+                     -v /tmp/config:/root/.minio \
                      minio/minio server /data     
                      
       - name: Download
