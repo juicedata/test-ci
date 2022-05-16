@@ -35,14 +35,16 @@ jobs:
           meta_url="mysql://root:root@(127.0.0.1)/test_gateway"
           db_name=$(basename $meta_url)
           name=myjfs
+          mp=/tmp/myjfs
           mysql -uroot -proot -e "drop database if exists $db_name; create database $db_name;" 
           export MINIO_ROOT_USER=minioadmin
           export MINIO_ROOT_PASSWORD=minioadmin
           ./juicefs format $meta_url $name
           ./juicefs gateway $meta_url localhost:9000 &
-          ./juicefs sync ./juicefs-source/pkg/   s3://minioadmin:minioadmin@localhost:9000/$name/pkg --no-https -p 20
-          exit 1
-       
+          ./juicefs sync ./juicefs-source/  s3://minioadmin:minioadmin@localhost:9000/$name/juicefs-source/ --no-https -p 20
+          ./juicefs mount -d $meta_url $mp
+          rm -rf $mp/juicefs-source 
+          
       - name: Setup upterm session
         if: ${{ failure() }}
         uses: lhotari/action-upterm@v1
