@@ -1,0 +1,48 @@
+name: "config-test"
+
+on:
+  push:
+    branches: 
+      - main
+  pull_request:
+    branches: 
+      - main
+  workflow_dispatch:
+  
+jobs:
+  config-test:
+    runs-on: ubuntu-latest
+    steps: 
+      - name: Checkout source code for sync test
+        uses: actions/checkout@v2
+        with:
+          repository: juicedata/juicefs
+          path: juicefs-source
+          
+      - name: Init 
+        run: |
+          sudo /etc/init.d/mysql start
+          
+      - name: Download
+        run: | 
+          wget -q https://github.com/juicedata/juicefs/releases/download/v1.0.0-beta2/juicefs-1.0.0-beta2-linux-amd64.tar.gz
+          tar -zxf juicefs-1.0.0-beta2-linux-amd64.tar.gz
+          wget -q https://dl.minio.io/client/mc/release/linux-amd64/mc
+          chmod +x mc 
+          
+      - name: Test
+        run: |
+          meta_url="mysql://root:root@(127.0.0.1)/test_gateway"
+          db_name=$(basename $meta_url)
+          name=myjfs
+          mysql -uroot -proot -e "drop database if exists $db_name; create database $db_name;" 
+          export MINIO_ROOT_USER=minioadmin
+          export MINIO_ROOT_PASSWORD=minioadmin
+          ./juicefs format $meta_url $name
+          ./juicefs gateway $meta_url localhost:9000 &
+          ./juicefs sync ./juicefs-source/pkg/   s3://minioadmin:minioadmin@localhost:9000/$name/pkg --no-https -p 20
+          exit 1
+       
+      - name: Setup upterm session
+        if: ${{ failure() }}
+        uses: lhotari/action-upterm@v1
