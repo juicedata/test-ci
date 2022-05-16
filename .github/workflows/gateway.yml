@@ -1,4 +1,4 @@
-name: "config-test"
+name: "gateway-test"
 
 on:
   push:
@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
   
 jobs:
-  config-test:
+  gateway-test:
     runs-on: ubuntu-latest
     steps: 
       - name: Checkout source code for sync test
