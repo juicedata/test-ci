@@ -53,7 +53,7 @@ jobs:
           ./mc cp --recursive data/  minio/$volume/data
           
           ./juicefs mount -d $meta_url $mp
-          md5deep -lrX $mp/data/ > sum.md5
+          md5deep -lrX sum.md5 $mp/data/ 
           
           exit 1
     
