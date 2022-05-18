@@ -29,7 +29,7 @@ jobs:
           tar -zxf juicefs-1.0.0-beta3-linux-amd64.tar.gz
           wget -q https://dl.minio.io/client/mc/release/linux-amd64/mc
           chmod +x mc 
-          sudo apt get md5deep
+          sudo apt install md5deep
           
       - name: Test1
         run: | 
