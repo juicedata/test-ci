@@ -29,9 +29,38 @@ jobs:
           tar -zxf juicefs-1.0.0-beta3-linux-amd64.tar.gz
           wget -q https://dl.minio.io/client/mc/release/linux-amd64/mc
           chmod +x mc 
+          sudo apt get md5deep
           
-      - name: Test
+      - name: Test1
+        run: | 
+          meta_url="mysql://root:root@(127.0.0.1)/test_gateway"
+          db_name=$(basename $meta_url)
+          volume=myjfs
+          mp=/tmp/myjfs
+          mysql -uroot -proot -e "drop database if exists $db_name; create database $db_name;" 
+          export MINIO_ROOT_USER=minioadmin
+          export MINIO_ROOT_PASSWORD=minioadmin
+          ./juicefs format $meta_url $volume
+          ./juicefs gateway $meta_url localhost:9000 &
+          mkdir $volume
+          for i in {1..1000}; do
+            dd if=/dev/urandom of=$volume/file_$i iflag=fullblock,count_bytes bs=4k count=10
+          done
+          
+          ./md5deep -lr $volume/ > sum.md5
+          ./mc alias set minio http://localhost:9000 minioadmin minioadmin --api S3v4
+          ./mc mb minio/$volume
+          ./mc cp --recursive $volume/  minio/$volume/
+          
+          ./juicefs mount -d $meta_url $mp
+          ./md5deep -lrX $mp/$volume/ > sum.md5
+          
+          exit 1
+    
+
+      - name: Test2
         run: |
+          exit 0
           meta_url="mysql://root:root@(127.0.0.1)/test_gateway"
           db_name=$(basename $meta_url)
           volume=myjfs
