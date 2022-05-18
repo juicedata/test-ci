@@ -44,16 +44,16 @@ jobs:
           ./juicefs gateway $meta_url localhost:9000 &
           mkdir $volume
           for i in {1..1000}; do
-            dd if=/dev/urandom of=$volume/file_$i iflag=fullblock,count_bytes bs=4k count=10
+            dd if=/dev/urandom of=$volume/file_$i iflag=fullblock,count_bytes bs=4k count=10 > /dev/null
           done
           
-          ./md5deep -lr $volume/ > sum.md5
+          md5deep -lr $volume/ > sum.md5
           ./mc alias set minio http://localhost:9000 minioadmin minioadmin --api S3v4
           ./mc mb minio/$volume
           ./mc cp --recursive $volume/  minio/$volume/
           
           ./juicefs mount -d $meta_url $mp
-          ./md5deep -lrX $mp/$volume/ > sum.md5
+          md5deep -lrX $mp/$volume/ > sum.md5
           
           exit 1
     
