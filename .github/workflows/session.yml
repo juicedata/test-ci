@@ -53,30 +53,34 @@ jobs:
           mysql -uroot -proot -e "drop database if exists $db_name; create database $db_name;" 
           ./juicefs format $meta_url $volume          
           ./juicefs mount -d $meta_url $mp
-          sleep 300
-          sudo /etc/init.d/mysql stop
-          sleep 300
-          sudo /etc/init.d/mysql start
-          ./juicefs status $meta_url 
-          mp2=./juicefs status $meta_url | grep MountPoint | awk -F: '{print $2}' | sed 's/"//g'
-          test -z "$mp2" && echo "session info is empty"; exit 1
+          for i in {1..2}; do
+            sleep $(expr 30*$i | bc)
+            sudo /etc/init.d/mysql stop
+            sleep $(expr 30*$i | bc)
+            sudo /etc/init.d/mysql start
+            ./juicefs status $meta_url 
+            mp2=./juicefs status $meta_url | grep MountPoint | awk -F: '{print $2}' | sed 's/"//g'
+            test -z "$mp2" && echo "session info is empty" && exit 1
+          done
           
       - name: Test with redis
+        if: ${{ always() }}
         run: | 
           meta_url="redis://localhost/1"
           volume=myjfs
           mp=/tmp/myjfs
           ./juicefs format $meta_url $volume          
           ./juicefs mount -d $meta_url $mp
-          sleep 300
-          container_id=$(docker ps -a | grep redis | awk '{print $1}')
-          sudo killall -9 redis-server
-          sleep 300
-          sudo docker restart $container_id
-          ./juicefs status $meta_url 
-          mp2=./juicefs status $meta_url | grep MountPoint | awk -F: '{print $2}' | sed 's/"//g'
-          test -z "$mp2" && echo "session info is empty"; exit 1
-          
+          for i in {1..2}; do
+            sleep $(expr 30*$i | bc)
+            container_id=$(docker ps -a | grep redis | awk '{print $1}')
+            sudo killall -9 redis-server
+            sleep $(expr 30*$i | bc)
+            sudo docker restart $container_id
+            ./juicefs status $meta_url 
+            mp2=./juicefs status $meta_url | grep MountPoint | awk -F: '{print $2}' | sed 's/"//g'
+            test -z "$mp2" && echo "session info is empty" && exit 1
+          done
       - name: Setup upterm session
         if: ${{ failure() }}
         uses: lhotari/action-upterm@v1
