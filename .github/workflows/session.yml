@@ -1,4 +1,4 @@
-name: "gateway-test"
+name: "session-test"
 
 on:
   push:
@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
   
 jobs:
-  gateway-test:
+  session-test:
     runs-on: ubuntu-latest
     services:
       redis:
