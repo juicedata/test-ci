@@ -59,7 +59,7 @@ jobs:
             sleep $(expr 30*$i | bc)
             sudo /etc/init.d/mysql start
             ./juicefs status $meta_url 
-            mp2=./juicefs status $meta_url | grep MountPoint | awk -F: '{print $2}' | sed 's/"//g'
+            mp2=$(./juicefs status $meta_url | grep MountPoint | awk -F: '{print $2}' | sed 's/"//g')
             test -z "$mp2" && echo "session info is empty" && exit 1
           done
           
@@ -78,7 +78,7 @@ jobs:
             sleep $(expr 30*$i | bc)
             sudo docker restart $container_id
             ./juicefs status $meta_url 
-            mp2=./juicefs status $meta_url | grep MountPoint | awk -F: '{print $2}' | sed 's/"//g'
+            mp2=$(./juicefs status $meta_url | grep MountPoint | awk -F: '{print $2}' | sed 's/"//g')
             test -z "$mp2" && echo "session info is empty" && exit 1
           done
       - name: Setup upterm session
