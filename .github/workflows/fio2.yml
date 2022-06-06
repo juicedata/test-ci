@@ -1,4 +1,4 @@
-name: "fio-benchmark"
+name: "fio-benchmark-2"
 
 on:
   schedule:
