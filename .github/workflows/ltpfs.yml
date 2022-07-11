@@ -46,11 +46,14 @@ jobs:
 
       - name: Juicefs Format
         run: |
+          cd /home/runner/work/test-ci/test-ci/juicefs
           sudo ./juicefs format --trash-days 0 redis://127.0.0.1:6379/1 pics
 
       - name: Juicefs Mount
         run: |
+          cd /home/runner/work/test-ci/test-ci/juicefs
           sudo ./juicefs mount -d redis://127.0.0.1:6379/1 /tmp/jfs --no-usage-report &
+          ls -lh /tmp/jfs/
 
       - name: LTP FS
         run: |
