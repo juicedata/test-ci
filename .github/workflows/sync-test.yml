@@ -2,16 +2,16 @@ name: "sync-test"
 
 on:
   push:
-    branches: 
-      - main
+    branches:
+      - 'release-**'
     paths:
       - './**'
       - '!docs/**'
       - '.github/sync-test.yml'
       - '!.github/**'
   pull_request:
-    branches: 
-      - main
+    branches:
+      - 'release-**'
     paths:
       - './**'
       - '!docs/**'

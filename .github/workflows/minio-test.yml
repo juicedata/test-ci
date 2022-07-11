@@ -2,13 +2,13 @@ name: "minio-test"
 
 on:
   push:
-    branches: 
-      - main
+    branches:
+      - 'release-**'
     paths-ignore:
       - '.github/*.yml'
   pull_request:
-    branches: 
-      - main
+    branches:
+      - 'release-**'
     paths-ignore:
       - '.github/*.yml'
   schedule:
