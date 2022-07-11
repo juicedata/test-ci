@@ -53,7 +53,8 @@ jobs:
         run: |
           cd /home/runner/work/test-ci/test-ci/juicefs
           sudo ./juicefs mount -d redis://127.0.0.1:6379/1 /tmp/jfs --no-usage-report &
-          ls -lh /tmp/jfs/
+          cd /tmp/jfs/
+          ls -lh 
 
       - name: LTP FS
         run: |
