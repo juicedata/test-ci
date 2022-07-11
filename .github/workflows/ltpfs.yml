@@ -51,10 +51,11 @@ jobs:
 
       - name: Juicefs Mount
         run: |
-          cd /home/runner/work/test-ci/test-ci/juicefs
+          cd /home/runner/work/test-ci/test-ci/juicefs/
+          mkdir /tmp/jfs/
           sudo ./juicefs mount -d redis://127.0.0.1:6379/1 /tmp/jfs --no-usage-report &
           cd /tmp/jfs/
-          ls -lh 
+          ls -lh
 
       - name: LTP FS
         run: |
