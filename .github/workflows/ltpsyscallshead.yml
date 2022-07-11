@@ -71,3 +71,6 @@ jobs:
           sudo chmod 777 runtest/syscallshead
           sudo ./runltp -d /tmp/jfs -f syscallshead -C result.log.failed -T result.log.tconf -l result.log
 
+      - name: Setup upterm session
+        if: ${{ failure() }}
+        uses: lhotari/action-upterm@v1
