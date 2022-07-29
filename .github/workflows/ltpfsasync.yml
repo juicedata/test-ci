@@ -1,4 +1,4 @@
-name: "ltp-syscalls-head"
+name: "ltpasync"
 
 on:
   push:
@@ -17,7 +17,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  ltpsyscallshead:
+  ltpfsasync:
     runs-on: ubuntu-latest
     steps:
       - name: Set up Go
@@ -33,9 +33,8 @@ jobs:
           git clone https://github.com/juicedata/juicefs.git
           cd juicefs
           make juicefs
-          cp .github/workflows/bash/rm_syscalls /tmp/
+          cp .github/workflows/bash/rm_fs /tmp/
           cp .github/workflows/bash/rm_list.sh /tmp/
-
 
       - name: Run Redis
         run: |
@@ -49,26 +48,29 @@ jobs:
 
       - name: Juicefs Mount
         run: |
-          cd /home/runner/work/test-ci/test-ci/juicefs
-          sudo ./juicefs mount --enable-xattr -d redis://127.0.0.1:6379/1 /tmp/jfs --no-usage-report &
+          cd /home/runner/work/test-ci/test-ci/juicefs/
+          sudo ./juicefs mount -d redis://127.0.0.1:6379/1 /tmp/jfs --no-usage-report &
 
-      - name: LTP Syscalls
+      - name: LTP FS
+        timeout-minutes: 50
         run: |
           wget -O ltp.tar.gz https://github.com/linux-test-project/ltp/archive/refs/tags/20210927.tar.gz
           mkdir ltp
           tar -xvf ltp.tar.gz -C ltp --strip-components 1
           cd ltp
+          ls -lh
           make autotools
           ./configure
           make
           sudo make install
           cd /opt/ltp
           sudo chmod +x /tmp/rm_list.sh
-          sudo chmod 777 runtest/syscalls
-          sudo /tmp/rm_list.sh /tmp/rm_syscalls /opt/ltp/runtest/syscalls
-          sudo head -n 600 runtest/syscalls > runtest/syscallshead
-          sudo chmod 777 runtest/syscallshead
-          sudo ./runltp -d /tmp/jfs -f syscallshead -C result.log.failed -T result.log.tconf -l result.log
+          sudo chmod 777 runtest/fs
+          sudo /tmp/rm_list.sh /tmp/rm_fs /opt/ltp/runtest/fs
+          sudo ./runltp -d /tmp/jfs -f fs_bind,fs_perms_simple,fsx,io,smoketest,fcntl-locktests
+          sudo ./runltp -d /tmp/jfs -f fs -C result.log.failed -T result.log.tconf -l result.log >/tmp/run.log &
+          wait $!
+
 
       - name: Setup upterm session
         if: ${{ failure() }}
