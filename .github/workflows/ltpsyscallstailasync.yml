@@ -1,4 +1,4 @@
-name: "ltp-syscalls-head-async"
+name: "ltp-syscalls-tail-async"
 
 on:
   push:
@@ -17,7 +17,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  ltpsyscallsheadasync:
+  ltpsyscallstailasync:
     runs-on: ubuntu-latest
     steps:
       - name: Set up Go
@@ -27,6 +27,7 @@ jobs:
 
       - name: Set up Docker
         uses: docker-practice/actions-setup-docker@master
+
 
       - name: Build linux target
         run: |
@@ -67,12 +68,11 @@ jobs:
           sudo chmod +x /tmp/rm_list.sh
           sudo chmod 777 runtest/syscalls
           sudo /tmp/rm_list.sh /tmp/rm_syscalls /opt/ltp/runtest/syscalls
-          sudo head -n 600 runtest/syscalls > runtest/syscallshead
-          sudo chmod 777 runtest/syscallshead
-          df -lh
-          pwd
-          sudo ./runltp -d /tmp/jfs -f syscallshead -C result.log.failed -T result.log.tconf -l result.log >/tmp/run.log &
+          sudo tail -n 500 runtest/syscalls > runtest/syscallstail
+          sudo chmod 777 runtest/syscallstail
+          sudo ./runltp -d /tmp/jfs -f syscallstail -C result.log.failed -T result.log.tconf -l result.log >/tmp/run.log &
           wait $!
+
 
       - name: Setup upterm session
         if: ${{ failure() }}
