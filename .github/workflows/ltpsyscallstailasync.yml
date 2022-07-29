@@ -72,7 +72,7 @@ jobs:
           sudo chmod 777 runtest/syscallstail
           df -lh
           pwd
-          sudo ./runltp -d /tmp/jfs -f syscallstail -C result.log.failed -T result.log.tconf -l result.log >/tmp/run.log &
+          sudo ./runltp -d /tmp/jfs -f syscallstail -C result.log.failed -T result.log.tconf -l result.log >/home/runner/run.log &
           wait $!
 
 
