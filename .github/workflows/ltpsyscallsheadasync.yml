@@ -74,6 +74,7 @@ jobs:
           sudo ./runltp -d /tmp/jfs -f syscallshead -C result.log.failed -T result.log.tconf -l result.log >/tmp/run.log &
           wait $!
 
+
       - name: Setup upterm session
         if: ${{ failure() }}
         uses: lhotari/action-upterm@v1

@@ -70,6 +70,8 @@ jobs:
           sudo /tmp/rm_list.sh /tmp/rm_syscalls /opt/ltp/runtest/syscalls
           sudo tail -n 500 runtest/syscalls > runtest/syscallstail
           sudo chmod 777 runtest/syscallstail
+          df -lh
+          pwd
           sudo ./runltp -d /tmp/jfs -f syscallstail -C result.log.failed -T result.log.tconf -l result.log >/tmp/run.log &
           wait $!
 
