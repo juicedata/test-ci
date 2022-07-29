@@ -72,7 +72,7 @@ jobs:
           sudo chmod 777 runtest/syscallshead
           df -lh
           pwd
-          sudo ./runltp -d /tmp/jfs -f syscallshead -C result.log.failed -T result.log.tconf -l result.log >run.log &
+          sudo ./runltp -d /tmp/jfs -f syscallshead -C result.log.failed -T result.log.tconf -l result.log >/tmp/run.log &
           wait $!
 
       - name: Setup upterm session
