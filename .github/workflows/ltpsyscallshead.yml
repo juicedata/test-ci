@@ -9,7 +9,6 @@ on:
   pull_request:
     #The branches below must be a subset of the branches above
     branches:
-      - 'main'
       - 'release-**'
     paths-ignore:
       - 'docs/**'
@@ -68,6 +67,7 @@ jobs:
           sudo chmod 777 runtest/syscalls
           echo "chdir01 chdir01" >>/tmp/rm_syscalls
           echo "setxattr01 setxattr01" >>/tmp/rm_syscalls
+          cat /tmp/rm_syscalls
           sudo /tmp/rm_list.sh /tmp/rm_syscalls /opt/ltp/runtest/syscalls
           sudo head -n 600 runtest/syscalls > runtest/syscallshead
           sudo chmod 777 runtest/syscallshead
